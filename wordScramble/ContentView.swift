@@ -8,36 +8,55 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var usedWords = [String()]
+    @State private var usedWords = [String]()
     @State private var newWord = String()
     @State private var rootWord = String()
     
     var body: some View {
-        NavigationStack{
-            List{
+        NavigationView {
+            List {
                 TextField("Enter a word", text: $newWord)
-                ForEach(usedWords, id: \.self){ word in
-                    Text(word)
+                ForEach(usedWords, id: \.self) { word in
+                    HStack {
+                        Image(systemName: "\(word.count).circle")
+                        Text(word)
+                    }
                 }
             }
-           
-        }.navigationTitle(rootWord).onSubmit {
-             addNewWord( )
+            .navigationTitle(rootWord)
+            .onSubmit() {
+                addNewWord()
+            }
+            .onAppear(perform: {
+                startGame()
+            })
+            .textInputAutocapitalization(.never)
         }
-        .textInputAutocapitalization(.never)
     }
     
-    func addNewWord( ){
-        let word = newWord.trimmingCharacters(in: .whitespacesAndNewlines)// removes new lines and white spaces
+    func addNewWord() {
+        let word = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard word.count > 0 else {
             return
         }
         withAnimation {
-            usedWords.insert(newWord, at: 0)
+            usedWords.insert(word, at: 0)
         }
         newWord = ""
     }
+    
+    func startGame() {
+        if let startWordUrl = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            if let startWords = try? String(contentsOf: startWordUrl) {
+                let allWords = startWords.components(separatedBy: "\n")
+                rootWord = allWords.randomElement() ?? "default"
+                return
+            }
+        }
+        fatalError("error while finding URL")
+    }
 }
+
 
 #Preview {
     ContentView()
