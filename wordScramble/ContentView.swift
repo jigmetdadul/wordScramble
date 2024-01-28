@@ -22,11 +22,20 @@ struct ContentView: View {
             }
            
         }.navigationTitle(rootWord).onSubmit {
-            withAnimation {
-                usedWords.insert(newWord, at: 0)
-            }
-          
+             addNewWord( )
         }
+        .textInputAutocapitalization(.never)
+    }
+    
+    func addNewWord( ){
+        let word = newWord.trimmingCharacters(in: .whitespacesAndNewlines)// removes new lines and white spaces
+        guard word.count > 0 else {
+            return
+        }
+        withAnimation {
+            usedWords.insert(newWord, at: 0)
+        }
+        newWord = ""
     }
 }
 
