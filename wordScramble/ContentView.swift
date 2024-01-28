@@ -8,14 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var usedWords = [String()]
+    @State private var newWord = String()
+    @State private var rootWord = String()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack{
+            List{
+                TextField("Enter a word", text: $newWord)
+                ForEach(usedWords, id: \.self){ word in
+                    Text(word)
+                }
+            }
+           
+        }.navigationTitle(rootWord).onSubmit {
+            withAnimation {
+                usedWords.insert(newWord, at: 0)
+            }
+          
         }
-        .padding()
     }
 }
 
